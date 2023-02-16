@@ -67,10 +67,29 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.4"
   level_channel:
     dependency: "direct main"
     description:
       path: ".."
+      relative: true
+    source: path
+    version: "0.0.1"
+  level_channel_platform_interface:
+    dependency: transitive
+    description:
+      path: "../../level_channel_platform_interface"
       relative: true
     source: path
     version: "0.0.1"

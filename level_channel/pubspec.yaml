@@ -1,8 +1,8 @@
 name: level_channel
 description: A plug-in for flutter MethodChannel, converted to protocol-based rather than method-based.
-repository: https://github.com/black-golden-road/level_channel/level_channel
 version: 0.0.1
 homepage: https://github.com/black-golden-road/level_channel
+repository: https://github.com/black-golden-road/level_channel/level_channel
 
 publish_to: none
 
@@ -13,14 +13,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  level_channel_android: 
-    path: ../level_channel_android
-  level_channel_ios: 
-    path: ../level_channel_ios
+  flutter_web_plugins:
+    sdk: flutter
   level_channel_platform_interface: 
     path: ../level_channel_platform_interface
-  level_channel_web: 
-    path: ../level_channel_web
 
 dev_dependencies:
   flutter_test:
@@ -31,9 +27,11 @@ flutter:
   plugin:
     platforms:
       android:
-        default_package: level_channel_android
+        package: com.flutter.seewo.level_channel
+        pluginClass: LevelChannelPlugin
       ios:
-        default_package: level_channel_ios
+        pluginClass: LevelChannelPlugin
       web:
-        default_package: level_channel_web
-   
+        pluginClass: LevelChannelWebPlugin
+        fileName: src/level_channel_web.dart
+

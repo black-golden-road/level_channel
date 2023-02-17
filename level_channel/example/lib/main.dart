@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    _levelChannelPlugin.post('test', {'key': 'vale'});
   }
 
   @override

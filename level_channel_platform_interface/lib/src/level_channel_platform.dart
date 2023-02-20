@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -86,14 +85,11 @@ abstract class LevelChannelPlatform extends PlatformInterface {
   Future<void> didRead(Object? message) async {
     try {
       if (message is Map<String, dynamic>) {
+        debugPrint('-----------------------$message');
         String path = message['path'] as String? ?? 'unknow';
         String method = message['method'] as String? ?? 'unknow';
         String idenfy = message['id'] as String? ?? 'unknow';
-        String? data = message['data'] as String?;
-        Map<String, dynamic>? result;
-        if (data != null && data.isNotEmpty) {
-          result = json.decode(data) as Map<String, dynamic>?;
-        }
+        Map<String, dynamic>? result = message['data'] as Map<String, dynamic>?;
         switch (method) {
           case _kChannelMethodRequest:
             var observer = _getObservers[path];
@@ -134,7 +130,7 @@ abstract class LevelChannelPlatform extends PlatformInterface {
     try {
       Map<String, dynamic> request = {'path': path, 'method': method};
       if (data != null) {
-        request['data'] = json.encode(data);
+        request['data'] = data;
       }
       if (idenfy != null) {
         request['id'] = idenfy;

@@ -91,12 +91,7 @@ public class LevelChannelManager: NSObject {
             if let method = respone["method"] as? String, let methodType = Method(rawValue: method) {
                 let path = respone["path"] as? String ?? "unknow"
                 let idenfy  = respone["id"]  as? String ?? "unknow"
-                var result: [String: Any]?
-                if let jsonString = respone["data"] as? String,
-                   let jsonData = jsonString.data(using: .utf8),
-                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) {
-                    result = jsonObject as? [String: Any]
-                }
+                var result: [String: Any]? = respone["data"] as? [String: Any]
                 switch methodType {
                 case .request:
                     let observer = getObserversMap[path]
@@ -131,10 +126,8 @@ public class LevelChannelManager: NSObject {
             var request = [String: Any]()
             request["path"] = path
             request["method"] = method.rawValue
-            if let param = parameters,
-                let jsonData = try? JSONSerialization.data(withJSONObject: param),
-                let jsonString = String(data: jsonData, encoding: .utf8) {
-                request["data"] = jsonString
+            if let param = parameters {
+                request["data"] = param
             }
             if let mIdenfy = idenfy {
                 request["id"] = mIdenfy

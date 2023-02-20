@@ -1,5 +1,8 @@
 package com.flutter.seewo.level_channel
 
+import android.os.Handler
+import android.os.Looper
+import androidx.annotation.UiThread
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.JSONMessageCodec
@@ -66,9 +69,10 @@ class LevelChannelManager(binaryMessenger: BinaryMessenger) : LevelChannelInterf
                         didReadData(message)
                     }
                 }
-                reply.reply(null)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }finally {
+                reply.reply(null)
             }
         }
     }
@@ -77,24 +81,27 @@ class LevelChannelManager(binaryMessenger: BinaryMessenger) : LevelChannelInterf
         val method = message.optString("method")
         val path = message.optString("path")
         val identify = message.optString("id")
+        val data = message.optJSONObject("data")
         when (method) {
             "request" -> {
                 val observer = getObserversMap[path]
                 observer?.mCallback?.let {
-                    it(message.optJSONObject("data")) { re ->
-                        send(path, "response", identify, re)
+                    it(data) { re ->
+                        Handler(Looper.getMainLooper()).post {
+                            // Call the desired channel message here.
+                            send(path, "response", identify = identify, parameters = re)
+                        }
                     }
                 }
             }
             "response" -> {
                 val key = "${path}request${identify}"
                 val response = responsesMap.remove(key)
-                response?.mCallback?.invoke(message.optJSONObject("data"))
-
+                response?.mCallback?.invoke(data)
             }
             "observer" -> {
                 val observer = postObserversMap[path]
-                observer?.mCallback?.invoke(message.optJSONObject("data"))
+                observer?.mCallback?.invoke(data)
             }
             else -> {
 
@@ -102,6 +109,7 @@ class LevelChannelManager(binaryMessenger: BinaryMessenger) : LevelChannelInterf
         }
     }
 
+    @UiThread
     private fun send(path: String, method: String, identify: String? = null, parameters: JSONObject? = null) {
         val request = JSONObject()
         request.put("path", path)
@@ -115,14 +123,16 @@ class LevelChannelManager(binaryMessenger: BinaryMessenger) : LevelChannelInterf
         writerChannel.send(request)
     }
 
+    @UiThread
     override fun get(path: String, parameters: JSONObject?, callback: (JSONObject?) -> Unit) {
         val identify = UUID.randomUUID().toString()
         val key =  "${path}request${identify}"
         val response = Response(path, identify, callback)
         responsesMap[key] = response
-        send(path, "request", identify, parameters)
+        send(path, "request", identify = identify, parameters = parameters)
     }
 
+    @UiThread
     override fun post(path: String, parameters: JSONObject?) {
         send(path, "observer", parameters = parameters)
     }

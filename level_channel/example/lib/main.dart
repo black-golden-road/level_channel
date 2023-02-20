@@ -20,22 +20,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _levelChannelPlugin.post('/navtive/show',
-        {'String': 'hello world', 'bool': true, 'num': 123, 'double': 123.78});
 
-    _levelChannelPlugin.addPostObserver('/flutter/show', (p0) {
-      if (p0 != null) {
-        debugPrint(p0.toString());
-      }
-    });
+    _levelChannelPlugin.addPostObserver('/flutter/show', (p0) {});
 
     _levelChannelPlugin.addGetObserver('/flutter/get', (p0) async {
-      if (p0 != null) {
-        debugPrint(p0.toString());
-      }
       return {'flutter get Observer': true};
     });
-    getContent();
+
+    postMessage();
   }
 
   @override
@@ -45,7 +37,10 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  Future<void> getContent() async {
+  Future<void> postMessage() async {
+    _levelChannelPlugin.post('/navtive/show',
+        {'String': 'hello world', 'bool': true, 'num': 123, 'double': 123.78});
+
     var result =
         await _levelChannelPlugin.get('/navtive/get', {'name': 'hello'});
     if (result != null) {

@@ -85,7 +85,6 @@ abstract class LevelChannelPlatform extends PlatformInterface {
   Future<void> didRead(Object? message) async {
     try {
       if (message is Map<String, dynamic>) {
-        debugPrint('-----------------------$message');
         String path = message['path'] as String? ?? 'unknow';
         String method = message['method'] as String? ?? 'unknow';
         String idenfy = message['id'] as String? ?? 'unknow';

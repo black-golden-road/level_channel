@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:html' as html;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:level_channel_platform_interface/level_channel_platform_interface.dart';
 
@@ -19,6 +20,10 @@ class LevelChannelWebPlugin extends LevelChannelPlatform {
 
   @override
   Future<void> send(Map<String, dynamic> message) async {
-    html.window.postMessage(message, 'window.top');
+    try {
+      html.window.parent?.postMessage(message, '*');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
